@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:great_places_flutter/widgets/input_image_widget.dart';
 
 class PlaceFormScreen extends StatefulWidget {
   const PlaceFormScreen({super.key});
@@ -30,12 +31,14 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
               },
             ),
             const SizedBox(height: 10),
+            InputImageWidget(imagePath: "", onImageSelected: (_) => {}),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
-              icon: const Icon(Icons.add),
-              label: const Text('Add Image'),
               onPressed: () {
-                // Handle image selection
+                // Handle save action
               },
+              icon: const Icon(Icons.save),
+              label: const Text('Save Place'),
             ),
           ],
         ),
