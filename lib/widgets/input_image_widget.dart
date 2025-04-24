@@ -1,22 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class InputImageWidget extends StatefulWidget {
-  final String imagePath;
   final Function(String) onImageSelected;
 
-  const InputImageWidget({
-    super.key,
-    required this.imagePath,
-    required this.onImageSelected,
-  });
+  const InputImageWidget({super.key, required this.onImageSelected});
 
   @override
   InputImageWidgetState createState() => InputImageWidgetState();
 }
 
 class InputImageWidgetState extends State<InputImageWidget> {
+  File? _storedImage;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -24,18 +22,24 @@ class InputImageWidgetState extends State<InputImageWidget> {
         const Text('Image'),
         const SizedBox(width: 10),
         GestureDetector(
-          onTap: () => widget.onImageSelected(widget.imagePath),
+          onTap: () => _takePicture(),
           child: CircleAvatar(
-            radius: 60,
-            backgroundImage: widget.imagePath.isNotEmpty
-                ? FileImage(File(widget.imagePath))
-                : null,
-            child: widget.imagePath.isEmpty
-                ? const Icon(Icons.camera_alt, size: 60)
-                : null,
+            radius: 140,
+            backgroundImage: _storedImage != null ? FileImage(_storedImage!) : null,
+            child: _storedImage == null ? const Icon(Icons.camera_alt, size: 60) : null,
           ),
         ),
       ],
     );
+  }
+
+  _takePicture() async {
+    final ImagePicker picker = ImagePicker();
+    XFile imageFile = await picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 600,
+    ) as XFile;
+
+    setState(() => _storedImage = File(imageFile.path));
   }
 }

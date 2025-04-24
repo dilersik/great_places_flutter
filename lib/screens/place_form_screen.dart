@@ -9,6 +9,9 @@ class PlaceFormScreen extends StatefulWidget {
 }
 
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
+
+  final _titleController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +25,7 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
               onChanged: (value) {
                 // Handle title change
               },
+              controller: _titleController,
             ),
             const SizedBox(height: 10),
             TextField(
@@ -31,12 +35,10 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
               },
             ),
             const SizedBox(height: 10),
-            InputImageWidget(imagePath: "", onImageSelected: (_) => {}),
+            InputImageWidget(onImageSelected: (_) => {}),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: () {
-                // Handle save action
-              },
+              onPressed: () => _submitForm(),
               icon: const Icon(Icons.save),
               label: const Text('Save Place'),
             ),
@@ -44,5 +46,13 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
         ),
       ),
     );
+  }
+
+  void _submitForm() {
+    final title = _titleController.text;
+    if (title.isEmpty) {
+      return;
+    }
+    // Save the place
   }
 }
