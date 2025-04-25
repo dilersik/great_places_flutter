@@ -1,6 +1,7 @@
 import 'dart:io';
 
 class Place {
+  static const String tableName = 'places';
   final String id;
   final String title;
   final PlaceLocation location;
