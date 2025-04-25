@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:great_places_flutter/providers/great_places_provider.dart';
 import 'package:great_places_flutter/widgets/input_image_widget.dart';
+import 'package:provider/provider.dart';
 
 class PlaceFormScreen extends StatefulWidget {
   const PlaceFormScreen({super.key});
@@ -11,7 +13,6 @@ class PlaceFormScreen extends StatefulWidget {
 }
 
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
-
   final _titleController = TextEditingController();
   File? _pickedImage;
 
@@ -54,10 +55,21 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
   void selectImage(File image) => setState(() => _pickedImage = image);
 
   void _submitForm() {
-    final title = _titleController.text;
-    if (title.isEmpty) {
+    if (_titleController.text.trim().isEmpty || _pickedImage == null) {
+      showDialog(
+        context: context,
+        builder:
+            (ctx) => AlertDialog(
+              title: const Text('Error'),
+              content: const Text('Please provide a title and an image.'),
+              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Okay'))],
+            ),
+      );
       return;
     }
-    // Save the place
+
+    Provider.of<GreatPlacesProvider>(context, listen: false).addPlace(_titleController.text, _pickedImage!);
+
+    Navigator.of(context).pop();
   }
 }
