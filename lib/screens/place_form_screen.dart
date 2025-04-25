@@ -22,31 +22,33 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
       appBar: AppBar(title: const Text('Add Place')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(labelText: 'Title'),
-              onChanged: (value) {
-                // Handle title change
-              },
-              controller: _titleController,
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Location'),
-              onChanged: (value) {
-                // Handle location change
-              },
-            ),
-            const SizedBox(height: 10),
-            InputImageWidget(onImageSelected: (file) => selectImage(file)),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () => _submitForm(),
-              icon: const Icon(Icons.save),
-              label: const Text('Save Place'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: 'Title'),
+                onChanged: (value) {
+                  // Handle title change
+                },
+                controller: _titleController,
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Location'),
+                onChanged: (value) {
+                  // Handle location change
+                },
+              ),
+              const SizedBox(height: 10),
+              InputImageWidget(onImageSelected: (file) => selectImage(file)),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () => _submitForm(),
+                icon: const Icon(Icons.save),
+                label: const Text('Save Place'),
+              ),
+            ],
+          ),
         ),
       ),
     );
