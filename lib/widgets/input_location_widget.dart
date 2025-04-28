@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 
 class InputLocationWidget extends StatefulWidget {
   final Function onSelectPlace;
@@ -37,7 +38,7 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
               icon: const Icon(Icons.location_on),
               label: const Text('Use current location'),
               onPressed: () {
-                // Logic to use current location
+                _getCurrentUserLocation();
                 widget.onSelectPlace('https://example.com/current-location');
               },
             ),
@@ -53,5 +54,10 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
         ),
       ],
     );
+  }
+
+  Future<void> _getCurrentUserLocation() async {
+    final location = await Location().getLocation();
+
   }
 }
