@@ -21,23 +21,36 @@ class PlacesListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer<GreatPlacesProvider>(
-        builder:
-            (ctx, greatPlaces, child) =>
-                greatPlaces.placesCount == 0
-                    ? const Center(child: Text('No places added yet!'))
-                    : ListView.builder(
-                      itemCount: greatPlaces.placesCount,
-                      itemBuilder:
-                          (ctx, i) => ListTile(
-                            leading: CircleAvatar(backgroundImage: FileImage(greatPlaces.getPlaceByIndex(i).image)),
-                            title: Text(greatPlaces.getPlaceByIndex(i).title),
-                            subtitle: Text(greatPlaces.getPlaceByIndex(i).location.address),
-                            onTap: () {
-                              // Handle place selection
-                            },
+      body: FutureBuilder(
+        future: Provider.of<GreatPlacesProvider>(context, listen: false).fetchPlaces(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('An error occurred!'));
+          } else {
+            return Consumer<GreatPlacesProvider>(
+              builder:
+                  (ctx, greatPlaces, child) =>
+                      greatPlaces.placesCount == 0
+                          ? const Center(child: Text('No places added yet!'))
+                          : ListView.builder(
+                            itemCount: greatPlaces.placesCount,
+                            itemBuilder:
+                                (ctx, i) => ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: FileImage(greatPlaces.getPlaceByIndex(i).image),
+                                  ),
+                                  title: Text(greatPlaces.getPlaceByIndex(i).title),
+                                  subtitle: Text(greatPlaces.getPlaceByIndex(i).location.address),
+                                  onTap: () {
+                                    // Handle place selection
+                                  },
+                                ),
                           ),
-                    ),
+            );
+          }
+        },
       ),
     );
   }
