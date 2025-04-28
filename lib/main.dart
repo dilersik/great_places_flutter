@@ -36,6 +36,17 @@ class MyApp extends StatelessWidget {
             centerTitle: true,
             iconTheme: IconThemeData(color: Colors.white),
           ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.indigo, // Button background
+              foregroundColor: Colors.white,  //
+              iconColor: Colors.white,// Text (and icon) color
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ),
         home: const PlacesListScreen(),
         routes: {
