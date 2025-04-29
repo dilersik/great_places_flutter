@@ -36,7 +36,7 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
               const SizedBox(height: 10),
               InputImageWidget(onImageSelected: (file) => selectImage(file)),
               const SizedBox(height: 20),
-              InputLocationWidget(onSelectPlace: () => {}),
+              InputLocationWidget(),
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: () => _submitForm(),

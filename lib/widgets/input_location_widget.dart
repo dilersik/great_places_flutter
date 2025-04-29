@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:great_places_flutter/screens/map_screen.dart';
 import 'package:great_places_flutter/utils/location_util.dart';
 import 'package:location/location.dart';
 
 class InputLocationWidget extends StatefulWidget {
-  final Function onSelectPlace;
-
-  const InputLocationWidget({super.key, required this.onSelectPlace});
+  const InputLocationWidget({super.key});
 
   @override
   State<InputLocationWidget> createState() => _InputLocationWidgetState();
@@ -38,23 +37,27 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
             TextButton.icon(
               icon: const Icon(Icons.location_on),
               label: const Text('Use current location'),
-              onPressed: () {
-                _getCurrentUserLocation();
-                widget.onSelectPlace('https://example.com/current-location');
-              },
+              onPressed: () => _getCurrentUserLocation(),
             ),
             TextButton.icon(
               icon: const Icon(Icons.map),
               label: const Text('Select on map'),
-              onPressed: () {
-                // Logic to select location on map
-                widget.onSelectPlace('https://example.com/location');
-              },
+              onPressed: () => _selectOnMap(),
             ),
           ],
         ),
       ],
     );
+  }
+
+  Future<void> _selectOnMap() async {
+    final selectedLocation = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (ctx) => MapScreen(), fullscreenDialog: true));
+    if (selectedLocation == null) {
+      return;
+    }
+    setState(() => _previewImageUrl = selectedLocation);
   }
 
   Future<void> _getCurrentUserLocation() async {
