@@ -4,34 +4,46 @@ import 'package:great_places_flutter/models/place.dart';
 
 class MapScreen extends StatefulWidget {
   final PlaceLocation initialLocation;
+  final bool isReadOnly;
 
-  const MapScreen({super.key, this.initialLocation = const PlaceLocation(latitude: 37.7749, longitude: -122.4194)});
+  const MapScreen({
+    super.key,
+    this.initialLocation = const PlaceLocation(latitude: 37.7749, longitude: -122.4194),
+    this.isReadOnly = false,
+  });
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
+
+  LatLng? _pickedPosition;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Location'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              // Handle save action
-            },
-          ),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.check), onPressed: () {})],
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(widget.initialLocation.latitude, widget.initialLocation.longitude),
           zoom: 16,
         ),
+        onTap: widget.isReadOnly ? null : (LatLng position) => _selectPosition(position),
+        markers: (_pickedPosition == null)
+            ? {}
+            : {
+                Marker(
+                  markerId: const MarkerId('m1'),
+                  position: _pickedPosition!,
+                ),
+              },
       ),
     );
   }
+
+  void _selectPosition(LatLng position) => setState(() => _pickedPosition = position);
 }
