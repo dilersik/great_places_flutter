@@ -57,7 +57,13 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
     if (selectedLocation == null) {
       return;
     }
-    setState(() => _previewImageUrl = selectedLocation);
+    setState(
+      () =>
+          _previewImageUrl = LocationUtil.getGoogleMapStaticImageUrl(
+            selectedLocation.latitude,
+            selectedLocation.longitude,
+          ),
+    );
   }
 
   Future<void> _getCurrentUserLocation() async {

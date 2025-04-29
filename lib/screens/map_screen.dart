@@ -17,7 +17,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-
   LatLng? _pickedPosition;
 
   @override
@@ -25,7 +24,16 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Location'),
-        actions: [IconButton(icon: const Icon(Icons.check), onPressed: () {})],
+        actions: [
+          if (!widget.isReadOnly)
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed:
+                  _pickedPosition == null
+                      ? null
+                      : () => Navigator.of(context).pop(_pickedPosition),
+            ),
+        ],
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
@@ -33,14 +41,7 @@ class _MapScreenState extends State<MapScreen> {
           zoom: 16,
         ),
         onTap: widget.isReadOnly ? null : (LatLng position) => _selectPosition(position),
-        markers: (_pickedPosition == null)
-            ? {}
-            : {
-                Marker(
-                  markerId: const MarkerId('m1'),
-                  position: _pickedPosition!,
-                ),
-              },
+        markers: (_pickedPosition == null) ? {} : {Marker(markerId: const MarkerId('m1'), position: _pickedPosition!)},
       ),
     );
   }
