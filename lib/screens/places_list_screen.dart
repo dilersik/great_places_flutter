@@ -36,17 +36,16 @@ class PlacesListScreen extends StatelessWidget {
                           ? const Center(child: Text('No places added yet!'))
                           : ListView.builder(
                             itemCount: greatPlaces.placesCount,
-                            itemBuilder:
-                                (ctx, i) => ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: FileImage(greatPlaces.getPlaceByIndex(i).image),
-                                  ),
-                                  title: Text(greatPlaces.getPlaceByIndex(i).title),
-                                  subtitle: Text(greatPlaces.getPlaceByIndex(i).location.address),
-                                  onTap: () {
-                                    // Handle place selection
-                                  },
-                                ),
+                            itemBuilder: (ctx, i) {
+                              final place = greatPlaces.getPlaceByIndex(i);
+                              return ListTile(
+                                leading: CircleAvatar(backgroundImage: FileImage(place.image)),
+                                title: Text(place.title),
+                                subtitle: Text(place.location.address),
+                                onTap:
+                                    () => Navigator.of(context).pushNamed(AppRoutesUtil.placeDetail, arguments: place),
+                              );
+                            },
                           ),
             );
           }

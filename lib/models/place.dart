@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class Place {
   static const String tableName = 'places';
   final String id;
@@ -25,4 +27,6 @@ class PlaceLocation {
     required this.longitude,
     this.address = '',
   });
+
+  LatLng get toLatLng => LatLng(latitude, longitude);
 }
