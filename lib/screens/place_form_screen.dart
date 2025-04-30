@@ -28,7 +28,11 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              TextField(decoration: const InputDecoration(labelText: 'Title'), controller: _titleController),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Title'),
+                controller: _titleController,
+                onChanged: (text) => setState(() {}),
+              ),
               const SizedBox(height: 10),
               InputImageWidget(onImageSelected: (file) => _selectImage(file)),
               const SizedBox(height: 20),
