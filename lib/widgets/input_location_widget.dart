@@ -70,20 +70,28 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
   }
 
   void _showLocationPreview(double latitude, double longitude) => setState(() {
-      _previewImageUrl = LocationUtil.getGoogleMapStaticImageUrl(latitude, longitude);
-      _isPreviewImageUrlLoading = false;
-    });
+    _previewImageUrl = LocationUtil.getGoogleMapStaticImageUrl(latitude, longitude);
+    _isPreviewImageUrlLoading = false;
+  });
 
   Future<void> _getCurrentUserLocation() async {
-    setState(() => _isPreviewImageUrlLoading = true);
-    final location = await Location().getLocation();
-    if (location.longitude == null || location.latitude == null) {
-      return;
+    try {
+      setState(() => _isPreviewImageUrlLoading = true);
+      final location = await Location().getLocation();
+      if (location.longitude == null || location.latitude == null) {
+        return;
+      }
+
+      widget.onSelectLocation(LatLng(location.latitude!, location.longitude!));
+
+      _showLocationPreview(location.latitude!, location.longitude!);
+    } catch (error) {
+      setState(() => _isPreviewImageUrlLoading = false);
+      AlertDialog(
+        title: const Text('Error'),
+        content: Text('Could not fetch current location: ${error.toString()}'),
+        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Okay'))],
+      );
     }
-
-    widget.onSelectLocation(LatLng(location.latitude!, location.longitude!));
-
-    final imageUrl = LocationUtil.getGoogleMapStaticImageUrl(location.latitude!, location.longitude!);
-    _showLocationPreview(location.latitude!, location.longitude!);
   }
 }
