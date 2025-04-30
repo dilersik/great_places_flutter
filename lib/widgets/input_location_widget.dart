@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:great_places_flutter/screens/map_screen.dart';
 import 'package:great_places_flutter/utils/location_util.dart';
 import 'package:location/location.dart';
 
 class InputLocationWidget extends StatefulWidget {
-  const InputLocationWidget({super.key});
+  final Function onSelectLocation;
+
+  const InputLocationWidget({super.key, required this.onSelectLocation});
 
   @override
   State<InputLocationWidget> createState() => _InputLocationWidgetState();
@@ -12,6 +15,7 @@ class InputLocationWidget extends StatefulWidget {
 
 class _InputLocationWidgetState extends State<InputLocationWidget> {
   String _previewImageUrl = '';
+  bool _isPreviewImageUrlLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,9 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
             borderRadius: BorderRadius.circular(10),
           ),
           child:
-              _previewImageUrl.isEmpty
+              _isPreviewImageUrlLoading
+                  ? const CircularProgressIndicator()
+                  : _previewImageUrl.isEmpty
                   ? const Text('No location chosen')
                   : Image.network(_previewImageUrl, fit: BoxFit.cover, width: double.infinity),
         ),
@@ -51,27 +57,34 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
   }
 
   Future<void> _selectOnMap() async {
+    setState(() => _isPreviewImageUrlLoading = true);
     final selectedLocation = await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (ctx) => MapScreen(), fullscreenDialog: true));
     if (selectedLocation == null) {
       return;
     }
-    setState(
-      () =>
-          _previewImageUrl = LocationUtil.getGoogleMapStaticImageUrl(
-            selectedLocation.latitude,
-            selectedLocation.longitude,
-          ),
-    );
+    setState(() {
+      _previewImageUrl = LocationUtil.getGoogleMapStaticImageUrl(selectedLocation.latitude, selectedLocation.longitude);
+      _isPreviewImageUrlLoading = false;
+    });
+
+    widget.onSelectLocation(LatLng(selectedLocation.latitude, selectedLocation.longitude));
   }
 
   Future<void> _getCurrentUserLocation() async {
+    setState(() => _isPreviewImageUrlLoading = true);
     final location = await Location().getLocation();
     if (location.longitude == null || location.latitude == null) {
       return;
     }
+
+    widget.onSelectLocation(LatLng(location.latitude!, location.longitude!));
+
     final imageUrl = LocationUtil.getGoogleMapStaticImageUrl(location.latitude!, location.longitude!);
-    setState(() => _previewImageUrl = imageUrl);
+    setState(() {
+      _previewImageUrl = imageUrl;
+      _isPreviewImageUrlLoading = false;
+    });
   }
 }

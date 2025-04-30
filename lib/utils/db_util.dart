@@ -12,7 +12,10 @@ class DBUtil {
     return sqflite.openDatabase(
       path.join(dbPath, dbName),
       onCreate: (db, version) {
-        return db.execute('CREATE TABLE ${Place.tableName}(id TEXT PRIMARY KEY, title TEXT, image TEXT)');
+        return db.execute(
+          'CREATE TABLE ${Place.tableName}'
+          '(id TEXT PRIMARY KEY, title TEXT, image TEXT, latitude REAL, longitude REAL, address TEXT)',
+        );
       },
       version: dbVersion,
     );

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:great_places_flutter/providers/great_places_provider.dart';
 import 'package:great_places_flutter/widgets/input_image_widget.dart';
 import 'package:great_places_flutter/widgets/input_location_widget.dart';
@@ -16,6 +17,7 @@ class PlaceFormScreen extends StatefulWidget {
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
   final _titleController = TextEditingController();
   File? _pickedImage;
+  LatLng? _pickedLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +28,14 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              TextField(
-                decoration: const InputDecoration(labelText: 'Title'),
-                onChanged: (value) {
-                  // Handle title change
-                },
-                controller: _titleController,
-              ),
+              TextField(decoration: const InputDecoration(labelText: 'Title'), controller: _titleController),
               const SizedBox(height: 10),
-              InputImageWidget(onImageSelected: (file) => selectImage(file)),
+              InputImageWidget(onImageSelected: (file) => _selectImage(file)),
               const SizedBox(height: 20),
-              InputLocationWidget(),
+              InputLocationWidget(onSelectLocation: (location) => _selectLocation(location)),
               const SizedBox(height: 20),
               ElevatedButton.icon(
-                onPressed: () => _submitForm(),
+                onPressed: _isValidForm() ? _submitForm : null,
                 icon: const Icon(Icons.save),
                 label: const Text('Save Place'),
               ),
@@ -50,24 +46,43 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
     );
   }
 
-  void selectImage(File image) => setState(() => _pickedImage = image);
+  void _selectImage(File image) => setState(() => _pickedImage = image);
 
-  void _submitForm() {
-    if (_titleController.text.trim().isEmpty || _pickedImage == null) {
+  void _selectLocation(LatLng location) => setState(() => _pickedLocation = location);
+
+  bool _isValidForm() => _titleController.text.trim().isNotEmpty && _pickedImage != null && _pickedLocation != null;
+
+  Future<void> _submitForm() async {
+    if (!_isValidForm()) {
       showDialog(
         context: context,
         builder:
             (ctx) => AlertDialog(
               title: const Text('Error'),
-              content: const Text('Please provide a title and an image.'),
+              content: const Text('Please provide a title, an image and a location.'),
               actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Okay'))],
             ),
       );
       return;
     }
 
-    Provider.of<GreatPlacesProvider>(context, listen: false).addPlace(_titleController.text, _pickedImage!);
-
+    final provider = Provider.of<GreatPlacesProvider>(context, listen: false);
+    try {
+      await provider.addPlace(_titleController.text, _pickedImage!, _pickedLocation!);
+    } catch (error) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder:
+            (ctx) => AlertDialog(
+              title: const Text('Error'),
+              content: Text('An error occurred while saving the place: ${error.toString()}'),
+              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Okay'))],
+            ),
+      );
+      return;
+    }
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 }
