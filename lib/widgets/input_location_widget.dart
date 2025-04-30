@@ -64,13 +64,15 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
     if (selectedLocation == null) {
       return;
     }
-    setState(() {
-      _previewImageUrl = LocationUtil.getGoogleMapStaticImageUrl(selectedLocation.latitude, selectedLocation.longitude);
-      _isPreviewImageUrlLoading = false;
-    });
+    _showLocationPreview(selectedLocation.latitude, selectedLocation.longitude);
 
     widget.onSelectLocation(LatLng(selectedLocation.latitude, selectedLocation.longitude));
   }
+
+  void _showLocationPreview(double latitude, double longitude) => setState(() {
+      _previewImageUrl = LocationUtil.getGoogleMapStaticImageUrl(latitude, longitude);
+      _isPreviewImageUrlLoading = false;
+    });
 
   Future<void> _getCurrentUserLocation() async {
     setState(() => _isPreviewImageUrlLoading = true);
@@ -82,9 +84,6 @@ class _InputLocationWidgetState extends State<InputLocationWidget> {
     widget.onSelectLocation(LatLng(location.latitude!, location.longitude!));
 
     final imageUrl = LocationUtil.getGoogleMapStaticImageUrl(location.latitude!, location.longitude!);
-    setState(() {
-      _previewImageUrl = imageUrl;
-      _isPreviewImageUrlLoading = false;
-    });
+    _showLocationPreview(location.latitude!, location.longitude!);
   }
 }
